@@ -34,32 +34,49 @@ function logIt(el1, el2)
 
 function whosTheAwesome(props)
 {
-    switch (props)
-    {
-        case true:
-            logIt(2);
-            break;
+    return new Promise((resolve) =>
+            {
+                switch (props)
+                {
+                    case true:
+                        logIt(2);
+                        resolve();
+                        break;
 
-        case false:
-            logIt(3);
-            setTimeout(() => { logIt(4, 5); }, 3000);
-    }
+                    case false:
+                        logIt(3);
+                        setTimeout(() =>
+                        {
+                            logIt(4, 5);
+                            resolve();
+                        }, 3000);
+                }
+            });
 }
+
+const syncUp = async (whatYouWantToHear) =>
+                {
+                    return new Promise((resolve) =>
+                    {
+                        setTimeout(() =>
+                        {
+                            await whosTheAwesome( (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true')) );
+                            resolve();
+                        }, 1000);
+                    });
+                }
 
 
 console.log(fontColor, theQuestion);
 
 readline.question((logTxt[0]),
-            function(whatYouWantToHear)
+            async (whatYouWantToHear) =>
             {
                 readline.close();
-                    logIt(1);
-                    setTimeout(() =>
-                    {
-                        whosTheAwesome( (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true')) );
-                    }, 1000);
+                logIt(1);
+                await syncUp(whatYouWantToHear);
             });
 
-//logIt(6);
+logIt(6);
 
 //-----------------------------[And this is where the line ends]-----------------------------------
