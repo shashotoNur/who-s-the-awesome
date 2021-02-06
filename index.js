@@ -1,15 +1,15 @@
 //----------------------------[A JS program to state the obvious]----------------------------------
 
-const readline = require('readline').createInterface(
+const readline = require( 'readline' ).createInterface(
 {
     input: process.stdin,
     output: process.stdout
 });
 
-const awesomeGuy = 'Shashoto';
-const fontColor = '\x1b[36m%s\x1b[0m';
-const theQuestion = "So who's the awesome???";
-const copyright = '\n[  Not under any \u00A9opyright because... why would it be!  ]';
+const awesomeGuy    = 'Shashoto';
+const fontColor     = '\x1b[36m%s\x1b[0m';
+const theQuestion   = "So who's the awesome???";
+const copyright     = '\n[  Not under any \u00A9opyright because... why would it be!  ]';
 
 const logTxt =
         [
@@ -22,12 +22,12 @@ const logTxt =
         ];
 
 
-const logIt = (el1, el2) =>
+const logIt = ( el1, el2 ) =>
 {
     var texts = [el1, el2];
     texts.forEach((item) =>
     {
-        if(item)
+        if( item )
             console.log(fontColor, logTxt[item]);
     });
 }
@@ -45,8 +45,11 @@ const whosTheAwesome = (props) =>
 
                     case false:
                         logIt(3);
-                        setTimeout(() => { logIt(4, 5); }, 3000);
-                        resolve();
+                        setTimeout(() =>
+                        {
+                            logIt(4, 5);
+                            resolve();
+                        }, 3000);
                         break;
                 }
             });
@@ -67,17 +70,17 @@ const syncUp = ( booleanValue ) =>
 const respond = async () =>
 {
     return new Promise((resolve) =>
-            {
-                readline.question((logTxt[0]),
-                    async (whatYouWantToHear) =>
-                    {
-                        readline.close();
-                        logIt(1);
-                        const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
-                        await syncUp( booleanValue );
-                        resolve();
-                    });
-            });
+        {
+            readline.question((logTxt[0]),
+                async (whatYouWantToHear) =>
+                {
+                    readline.close();
+                    logIt(1);
+                    const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
+                    await syncUp( booleanValue );
+                    resolve();
+                });
+        });
 }
 
 const execute = async() =>
