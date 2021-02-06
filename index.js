@@ -9,6 +9,7 @@ const readline = require('readline').createInterface(
 const awesomeGuy = 'Shashoto';
 const fontColor = '\x1b[36m%s\x1b[0m';
 const theQuestion = "So who's the awesome???";
+const copyright = '\n[  Not under any \u00A9opyright because... why would it be!  ]';
 
 const logTxt =
         [
@@ -18,11 +19,10 @@ const logTxt =
             `=> Anyone, who is not ${awesomeGuy}, can be the awesome... * SARCASM *`,
             '\n\t------------- JK!!! XD -------------',
             ` Truth be told, ${awesomeGuy} is the awesome, the one and only!`,
-            '\n[  Not under any \u00A9opyright because... why would it be!  ]'
         ];
 
 
-function logIt(el1, el2)
+const logIt = (el1, el2) =>
 {
     var texts = [el1, el2];
     texts.forEach((item) =>
@@ -32,9 +32,9 @@ function logIt(el1, el2)
     });
 }
 
-function whosTheAwesome(props)
-{
-    return new Promise((resolve) =>
+const whosTheAwesome = (props) =>
+    {
+        return new Promise((resolve) =>
             {
                 switch (props)
                 {
@@ -45,38 +45,48 @@ function whosTheAwesome(props)
 
                     case false:
                         logIt(3);
-                        setTimeout(() =>
-                        {
-                            logIt(4, 5);
-                            resolve();
-                        }, 3000);
+                        setTimeout(() => { logIt(4, 5); }, 3000);
+                        resolve();
+                        break;
                 }
+            });
+    }
+
+const syncUp = ( booleanValue ) =>
+    {
+        return new Promise((resolve) =>
+            {
+                setTimeout(async () =>
+                {
+                    await whosTheAwesome( booleanValue );
+                    resolve();
+                }, 1000);
+            });
+    }
+
+const respond = async () =>
+{
+    return new Promise((resolve) =>
+            {
+                readline.question((logTxt[0]),
+                    async (whatYouWantToHear) =>
+                    {
+                        readline.close();
+                        logIt(1);
+                        const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
+                        await syncUp( booleanValue );
+                        resolve();
+                    });
             });
 }
 
-const syncUp = async (whatYouWantToHear) =>
-                {
-                    return new Promise((resolve) =>
-                    {
-                        setTimeout(() =>
-                        {
-                            await whosTheAwesome( (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true')) );
-                            resolve();
-                        }, 1000);
-                    });
-                }
+const execute = async() =>
+{
+    console.log(fontColor, theQuestion);
+    await respond();
+    console.log(fontColor, copyright);
+}
 
-
-console.log(fontColor, theQuestion);
-
-readline.question((logTxt[0]),
-            async (whatYouWantToHear) =>
-            {
-                readline.close();
-                logIt(1);
-                await syncUp(whatYouWantToHear);
-            });
-
-logIt(6);
+execute();
 
 //-----------------------------[And this is where the line ends]-----------------------------------
