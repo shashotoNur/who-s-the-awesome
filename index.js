@@ -6,10 +6,11 @@ const readline = require( 'readline' ).createInterface(
     output: process.stdout
 });
 
+var i = 0;
 const awesomeGuy    = 'Shashoto';
 const fontColor     = '\x1b[36m%s\x1b[0m';
 const theQuestion   = "So who's the awesome???";
-const copyright     = '\n[  Not under any \u00A9opyright because... why would it be!  ]';
+const copyright     = '\n[  Not under any \u00A9opyright because... wHy w0u1d iT BE!#  ]';
 
 const logTxt =
         [
@@ -22,21 +23,33 @@ const logTxt =
         ];
 
 
+function writer()
+{
+    if (i < copyright.length) 
+    {
+        process.stdout.write(copyright.charAt(i));
+        i++;
+        setTimeout(writer, 50);
+    }
+    else
+        setTimeout(() => { i = 0; }, 1000);
+}
+
 const logIt = ( el1, el2 ) =>
 {
-    var texts = [el1, el2];
-    texts.forEach((item) =>
+    var texts = [ el1, el2 ];
+    texts.forEach( ( item ) =>
     {
         if( item )
-            console.log(fontColor, logTxt[item]);
+            console.log( fontColor, logTxt[item] );
     });
 }
 
-const whosTheAwesome = (props) =>
+const whosTheAwesome = ( props ) =>
     {
-        return new Promise((resolve) =>
+        return new Promise( ( resolve ) =>
             {
-                switch (props)
+                switch ( props )
                 {
                     case true:
                         logIt(2);
@@ -45,7 +58,7 @@ const whosTheAwesome = (props) =>
 
                     case false:
                         logIt(3);
-                        setTimeout(() =>
+                        setTimeout( () =>
                         {
                             logIt(4, 5);
                             resolve();
@@ -57,9 +70,9 @@ const whosTheAwesome = (props) =>
 
 const syncUp = ( booleanValue ) =>
     {
-        return new Promise((resolve) =>
+        return new Promise( ( resolve ) =>
             {
-                setTimeout(async () =>
+                setTimeout(async() =>
                 {
                     await whosTheAwesome( booleanValue );
                     resolve();
@@ -67,12 +80,12 @@ const syncUp = ( booleanValue ) =>
             });
     }
 
-const respond = async () =>
+const respond = () =>
 {
-    return new Promise((resolve) =>
+    return new Promise( ( resolve ) =>
         {
-            readline.question((logTxt[0]),
-                async (whatYouWantToHear) =>
+            readline.question( ( logTxt[0] ),
+                async ( whatYouWantToHear ) =>
                 {
                     readline.close();
                     logIt(1);
@@ -87,7 +100,7 @@ const execute = async() =>
 {
     console.log(fontColor, theQuestion);
     await respond();
-    console.log(fontColor, copyright);
+    writer();
 }
 
 execute();
