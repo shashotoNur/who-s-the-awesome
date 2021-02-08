@@ -6,50 +6,66 @@ const readline = require( 'readline' ).createInterface(
     output: process.stdout
 });
 
-var i = 0;
 const awesomeGuy    = 'Shashoto';
-const theQuestion   = "So who's the awesome???";
+const theQuestion   = "So who's the awesome???\n";
 const copyright     = '\n[   Not under any \u00A9opyright because... wHy w0u1d iT BE!   ]';
 
 const logTxt =
         [
             '   What sort of answer would you like for that? (truthy || falsy)\n   => ',
-            'Wait for it...',
-            `=> ${awesomeGuy} is the awesome, obviously...`,
-            `=> Anyone, who is not ${awesomeGuy}, can be the awesome... * SARCASM *`,
-            '\n\t------------- JK!!! XD -------------',
-            ` Truth be told, ${awesomeGuy} is the awesome, the one and only!`,
+            'Wait for it...\n',
+            `=> ${awesomeGuy} is the awesome, obviously...\n`,
+            `=> Anyone, who is not ${awesomeGuy}, can be the awesome... * SARCASM *\n`,
+            '\n\t------------- JK!!! XD -------------\n',
+            ` Truth be told, ${awesomeGuy} is the awesome, the one and only!\n`,
         ];
 
-
-const writer = ( el1, el2 ) =>
+const logChar = (arr, i) =>
 {
-    switch ((typeof el1 == 'string'))
+    return new Promise( async( resolve ) =>
     {
-        case true:
-            const recursiveFn = () =>
+        setTimeout( (arr, i) =>
+        {
+            process.stdout.write('\x1b[36m' + arr[i] + '\x1b[0m');
+            resolve();
+        }, 50, arr, i);
+    });
+}
+
+const logString = (txt) =>
+{
+    return new Promise( async( resolve ) =>
+    {
+        var arr = txt.split("");
+        for(var i = 0; i < txt.length; i++) { await logChar(arr, i); }
+        resolve();
+    });
+}
+
+const writer = async( el1, el2 ) =>
+{
+    var txt = '';
+
+    if( (typeof el1 != 'string') )
+    {
+        var texts = [ el1, el2 ];
+        texts.forEach( async( item ) =>
+        {
+            if( item )
             {
-                if (i < el1.length)
-                {
-                    process.stdout.write(['\x1b[36m', el1.charAt(i), '\x1b[0m'].join(''));
-                    i++;
-                    setTimeout(recursiveFn, 50);
-                }
-                else
-                    setTimeout( () => { i = 0; }, 2000);
+                txt = logTxt[item];
+                await logString(txt);
             }
-            recursiveFn();
-            break;
-        
-        case false:
-            var texts = [ el1, el2 ];
-            texts.forEach( ( item ) =>
-            {
-                if( item )
-                    process.stdout.write(['\x1b[36m', logTxt[item], '\x1b[0m\n'].join(''));
-            });
-            break;
+
+        });
     }
+
+    else if( (typeof el1 == 'string') )
+    {
+        txt = el1;
+        await logString(txt);
+    }
+    
 }
 
 const whosTheAwesome = ( props ) =>
@@ -65,7 +81,7 @@ const whosTheAwesome = ( props ) =>
 
                     case false:
                         writer(3);
-                        setTimeout( () =>
+                        setTimeout( async() =>
                         {
                             writer(4, 5);
                             resolve();
@@ -91,7 +107,7 @@ const respond = () =>
 {
     return new Promise( ( resolve ) =>
         {
-            readline.question( (['\x1b[36m', logTxt[0], '\x1b[0m'].join('') ),
+            readline.question( ( '\x1b[36m' + logTxt[0] + '\x1b[0m' ),
                 async ( whatYouWantToHear ) =>
                 {
                     readline.close();
@@ -105,7 +121,7 @@ const respond = () =>
 
 const execute = async() =>
 {
-    process.stdout.write(['\x1b[36m', theQuestion, '\x1b[0m\n'].join(''));
+    writer(theQuestion);
     await respond();
     writer(copyright);
 }
