@@ -44,7 +44,9 @@ const logString = (txt) =>
 
 const writer = async( el1, el2 ) =>
 {
-    var txt = '';
+return new Promise( async( resolve ) =>
+    {
+        var txt = '';
 
     if( (typeof el1 != 'string') )
     {
@@ -65,25 +67,27 @@ const writer = async( el1, el2 ) =>
         txt = el1;
         await logString(txt);
     }
+    resolve();
+    });
     
 }
 
-const whosTheAwesome = ( props ) =>
+const whosTheAwesome = async( props ) =>
     {
-        return new Promise( ( resolve ) =>
+        return new Promise( async( resolve ) =>
             {
                 switch ( props )
                 {
                     case true:
-                        writer(2);
+                        await writer(2);
                         resolve();
                         break;
 
                     case false:
-                        writer(3);
+                        await writer(3);
                         setTimeout( async() =>
                         {
-                            writer(4, 5);
+                            await writer(4, 5);
                             resolve();
                         }, 3000);
                         break;
@@ -111,7 +115,7 @@ const respond = () =>
                 async ( whatYouWantToHear ) =>
                 {
                     readline.close();
-                    writer(1);
+                    await writer(1);
                     const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
                     await syncUp( booleanValue );
                     resolve();
@@ -121,9 +125,9 @@ const respond = () =>
 
 const execute = async() =>
 {
-    writer(theQuestion);
+    await writer(theQuestion);
     await respond();
-    writer(copyright);
+    await writer(copyright);
 }
 
 execute();
