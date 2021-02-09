@@ -20,56 +20,56 @@ const logTxt =
             ` Truth be told, ${awesomeGuy} is the awesome, the one and only!\n`,
         ];
 
-const logChar = (arr, i) =>
-{
-    return new Promise( async( resolve ) =>
-    {
-        setTimeout( (arr, i) =>
-        {
-            process.stdout.write('\x1b[36m' + arr[i] + '\x1b[0m');
-            resolve();
-        }, 50, arr, i);
-    });
-}
-
-const logString = (txt) =>
-{
-    return new Promise( async( resolve ) =>
-    {
-        var arr = txt.split("");
-        for(var i = 0; i < txt.length; i++) { await logChar(arr, i); }
-        resolve();
-    });
-}
 
 const writer = async( el1, el2 ) =>
 {
-return new Promise( async( resolve ) =>
+    const logChar = (arr, i) =>
     {
-        var txt = '';
-
-    if( (typeof el1 != 'string') )
-    {
-        var texts = [ el1, el2 ];
-        texts.forEach( async( item ) =>
+        return new Promise( async( resolve ) =>
         {
-            if( item )
+            setTimeout( (arr, i) =>
             {
-                txt = logTxt[item];
-                await logString(txt);
-            }
-
+                process.stdout.write('\x1b[36m' + arr[i] + '\x1b[0m');
+                resolve();
+            }, 50, arr, i);
         });
     }
 
-    else if( (typeof el1 == 'string') )
+    const logString = (txt) =>
     {
-        txt = el1;
-        await logString(txt);
+        return new Promise( async( resolve ) =>
+        {
+            var arr = txt.split("");
+            for(var i = 0; i < txt.length; i++) { await logChar(arr, i); }
+            resolve();
+        });
     }
-    resolve();
-    });
-    
+
+    return new Promise( async( resolve ) =>
+    {
+        var txt = '';
+
+        if( (typeof el1 != 'string') )
+        {
+            var texts = [ el1, el2 ];
+            texts.forEach( async( item ) =>
+            {
+                if( item )
+                {
+                    txt = logTxt[item];
+                    await logString(txt);
+                }
+
+            });
+        }
+
+        else if( (typeof el1 == 'string') )
+        {
+            txt = el1;
+            await logString(txt);
+        }
+        resolve();
+    });    
 }
 
 const whosTheAwesome = async( props ) =>
@@ -95,12 +95,13 @@ const whosTheAwesome = async( props ) =>
             });
     }
 
-const syncUp = ( booleanValue ) =>
+const waitForIT = ( whatYouWantToHear ) =>
     {
         return new Promise( ( resolve ) =>
             {
                 setTimeout(async() =>
                 {
+                    const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
                     await whosTheAwesome( booleanValue );
                     resolve();
                 }, 1000);
@@ -116,8 +117,7 @@ const respond = () =>
                 {
                     readline.close();
                     await writer(1);
-                    const booleanValue = (whatYouWantToHear.includes('truthy')) || (whatYouWantToHear.includes('true'));
-                    await syncUp( booleanValue );
+                    await waitForIt( whatYouWantToHear );
                     resolve();
                 });
         });
