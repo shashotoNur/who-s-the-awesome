@@ -33,7 +33,7 @@ const whosTheAwesome = async ( props ) =>
 
             case false:
                 await writer(strings[3]);
-                await pause(3000);
+                await pause(2000);
                 await writer(strings[4]);
                 await dynamicWriter(strings[5], [",", 50], ["awesome", "150"]);
                 break;
@@ -75,5 +75,6 @@ const execute = async () =>
     }
 
 execute();
+
 
 //-----------------------------[And this is where the line ends]-----------------------------------
