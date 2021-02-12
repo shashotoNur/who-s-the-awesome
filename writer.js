@@ -1,15 +1,59 @@
 //--------------- Log with typewriter effect in the console --------------
 
-const { pause } = require("./pause");
+/*
+    import it via es5 syntax:
+        const { pause, writer, dynamicWriter } = require("./writer");
+*/
+
+
+const pause = (time = 1000) =>
+    {
+        return new Promise( (resolve) =>
+            {
+                setTimeout(() => { resolve(); }, ( time >= 0 ) ? time : 0);
+            });
+    };
+
+const logErr = (n, str, i) =>
+    {
+        const error =
+            [
+                [
+                    "\n\twriter() takes a string as first parameter,",
+                    "\n\tand optionally the time perod to log each character."
+                ],
+
+                [
+                    `\n\tthe string,`,
+                    `\n\t => "${str}"`,
+                    `\n\tpassed through argument no. ${i},`,
+                    `\n\tdoes not exist within the main string`
+                ],
+
+                [
+                    "\n\tdynamicWriter() takes a string as first parameter,",
+                    "\n\tfollowed by greater than 0 number of arrays of two elements",
+                    "\n\twhich define the final word of the partial string",
+                    "\n\tand the time perod to log each character."
+                ]
+            ]
+
+        var currentErr = error[n];
+        process.stdout.write("\n\x1b[31mError: ");
+        currentErr.forEach( (element) =>
+        {
+            process.stdout.write("\x1b[31m" + element);
+        });
+    }
 
 const writer = async (str, time = 50) =>
     {
-        if( str )
+        if( typeof str === "string" )
         {
             const logEachChar = async ( char ) =>
             {
                 await pause(time);
-                process.stdout.write( ('\x1b[36m' + char + '\x1b[0m') );
+                process.stdout.write( char );
                 return Promise.resolve();
             };
 
@@ -18,18 +62,8 @@ const writer = async (str, time = 50) =>
             {
                 await logEachChar(arr[i]);
             }
-
         }
-
-        else
-        {
-            var err =
-                [
-                    "\n\twriter() takes a string as first parameter,",
-                    "\n\tand optionally the time perod to log each character."
-                ];
-            console.log("\x1b[31mError: " + err[0] + err[1]);
-        }
+        else logErr(0);
 
         return Promise.resolve();
     };
@@ -40,9 +74,9 @@ async function dynamicWriter()
 
         async function logPartialStr( arr )
         {
-            end  = (lastCycle) ? str.length
+            end  = (oneLastCycle || arr[0] == 'end//') ? str.length
                                : ( str.search( arr[0] ) + arr[0].length );
-            time = (lastCycle) ? 50 
+            time = (oneLastCycle) ? 50 
                                : arr[1];
 
             newStr = str.slice(start, end);
@@ -52,38 +86,35 @@ async function dynamicWriter()
 
         if( arguments.length > 1 )
         {
-            var str = arguments[0], start, end, time, newStr, lastCycle = false;
+            var str = arguments[0], start, end, time, newStr, oneLastCycle = false;
 
             for(var i = 1; i < ( arguments.length ); i++)
             {
                 if(i == 1) { start = 0; }
-                arr = arguments[i];
-                await logPartialStr( arr, i );
+                var arr = arguments[i];
+
+                if( str.search( arr[0] ) == -1 && arr[0] != 'end//' )
+                {
+                    logErr(1, arr[0], i);
+                    i = arguments.length;
+                }
+                else await logPartialStr( arr );
+
                 start = end;
             }
 
-            if( end < str.length )
+            if( end != -1 && end < str.length )
             {
-                lastCycle = true;
+                oneLastCycle = true;
                 await logPartialStr();
             }
         }
-
-        else
-        {
-            var err =
-                [
-                    "\n\tdynamicWriter() takes a string as first parameter,",
-                    "\n\tfollowed by any number of arrays of two elements",
-                    "\n\twhich define the final word of the partial string",
-                    "\n\tand the time perod to log each character."
-                ];
-            console.log("\x1b[31mError: " + err[0] + err[1] + err[2] + err[3]);
-        }
+        else logErr(2);
 
         return Promise.resolve();        
     }
 
 
+exports.pause = pause;
 exports.writer = writer;
 exports.dynamicWriter = dynamicWriter;

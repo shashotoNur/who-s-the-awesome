@@ -3,7 +3,7 @@
 const { pause } = require("./pause");
 const { writer, dynamicWriter } = require("./writer");
 const readline = require( 'readline' ).createInterface(
-    {
+    { 
         input: process.stdin,
         output: process.stdout
     });
